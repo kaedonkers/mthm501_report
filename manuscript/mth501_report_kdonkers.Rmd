@@ -23,16 +23,21 @@ What is the relationship between GDP and household waste?
 One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected.
 On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
 
+The European Union (EU) has a statistics body, EuroStat, which collects data on member states.
 
 # Objectives
-The objectives will be to collect data on municipal waste production and annual GDP for countries in the EU from EuroStat[cit].
-Then 
-
+1. Tidy data
+2. Fix missing data (imputation?)
+3. Map the data (gdp, waste)
+4. Linear model across countries (pick a year), across time (pick a country), then multi-variable linear model.
+5*. Factor in population?
+6*. Factor in clustering across regions?
+7. Final analyses presented.
+8. Limitations of approach discussed.
 
 
 
 # Data
-The European Union (EU) has a statistics body, EuroStat, which collects data on various
 
 # Results
 
@@ -46,7 +51,19 @@ The European Union (EU) has a statistics body, EuroStat, which collects data on 
 
 # Data Sources
 
-GDP (NAMA_10_GDP) -> https://ec.europa.eu/eurostat/databrowser/view/NAMA_10_GDP__custom_188199/default/table
+EU GDP (NAMA_10_GDP) -> https://ec.europa.eu/eurostat/databrowser/view/NAMA_10_GDP__custom_188199/default/table
 
-Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table
+EU Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table
 
+---
+UN GDP
+https://data.un.org/Data.aspx?q=gdp&d=SNAAMA&f=grID:101;currID:USD;pcFlag:1&c=2,3,5,6&s=_crEngNameOrderBy:asc,yr:desc&v=1
+
+UN Waste
+https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1814&c=2,3,4,5&s=countryName:asc,yr:desc&v=1
+
+UN Pop
+https://data.un.org/Data.aspx?q=population+datamart%5bENV%2cPOP%5d&d=POP&f=tableCode:1&c=2,3,6,8,10,12,13,14&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
+
+UN Pop served by waste collection
+https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1878&c=2,3,4,5&s=countryName:asc,yr:desc&v=1
