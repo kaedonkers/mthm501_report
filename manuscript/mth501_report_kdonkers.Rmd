@@ -1,0 +1,52 @@
+---
+title: "MTHM501 Assessment Report"
+author: "Kevin Donkers (EI CDT) - 700063874"
+date: "11/11/2020"
+output:
+  html_document:
+    fig_caption: yes
+    smart: no
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE)
+```
+
+# Introduction
+The UN have Sustainable Development Goals.
+One of which is to reduce waste (SDG12?)
+However another is to increase human prosperity (SDGX?)
+A measure of prosperity if Gross Domestic Product (GDP).
+
+What is the relationship between GDP and household waste?
+One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected.
+On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
+
+
+# Objectives
+The objectives will be to collect data on municipal waste production and annual GDP for countries in the EU from EuroStat[cit].
+Then 
+
+
+
+
+# Data
+The European Union (EU) has a statistics body, EuroStat, which collects data on various
+
+# Results
+
+# Limitations
+
+# Conclusion
+
+\pagebreak
+
+# References
+
+# Data Sources
+
+GDP (NAMA_10_GDP) -> https://ec.europa.eu/eurostat/databrowser/view/NAMA_10_GDP__custom_188199/default/table
+
+Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table
+
