@@ -24,6 +24,8 @@ One theory would be that increased GDP is linked to an increase in consumerism, 
 On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
 
 The European Union (EU) has a statistics body, EuroStat, which collects data on member states.
+OR
+United Nations Statistics Division collects data from member states.
 
 # Objectives
 1. Tidy data
@@ -38,6 +40,10 @@ The European Union (EU) has a statistics body, EuroStat, which collects data on 
 
 
 # Data
+Use data from UNStats
+Data on GDP, municipal waste collection per capita, population served by waste collection and population. 
+All data is contains annual values 
+
 
 # Results
 
