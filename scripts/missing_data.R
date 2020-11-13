@@ -43,6 +43,10 @@ da %>%
 
 # ---
 # 3. Use UN imputation method
+# https://uneplive.unep.org/media/docs/graphs/aggregation_methods.pdf
+# 1. Gaps <= 10 years = exponential interpolation
+# 2. Ends = 3 year extrapolation of last value
+# 3. Gaps > 10 years = 3 year extrapolation each end
 
 
 
@@ -53,3 +57,41 @@ da %>%
 # ---
 # 4. Multiple imputation (country clustered)
 # - Might need removal of low entry countries with NAs?
+library(Amelia)
+
+data <- select(waste, c("Country or Area", "Year", "Value")) %>%
+  rename("waste"="Value") %>%
+  filter(!is.na(Year)) %>%
+  left_join(select(gdp, -Item)) %>%
+  rename("gdp_pc"="Value") %>%
+  left_join(pop_tot) %>%
+  rename("pop"="Value") %>%
+  rename("country"="Country or Area") %>%
+  rename("year" = "Year")
+
+set.seed(467)
+imp_amelia <- amelia(x = as.data.frame(data), #dataframe to overcome tibble error
+                     m = 5, # repeat 5 times
+                     idvars="country", #not imputed
+                     logs = c("gdp_pc", "waste", "pop"), #all vars need log transform
+                     p2s = 1) #Some textual output
+
+# TODO: How to stop producing negative imputations?
+# Read docs -> https://cran.r-project.org/web/packages/Amelia/vignettes/amelia.pdf
+# SOLUTION: Log pop also -> otherwise it thinks the population is normally distributed around low values, and bleeds over into negatives
+
+# Plot missings
+missmap(imp_amelia)
+
+# Calculate 
+mutate.amelia.out <- lapply(imp_amelia$imputations, function(i) mutate(i, waste_pc=waste*1000/pop))
+
+# Fit linear model to all the imputations
+lm.amelia.out <- lapply(mutate.amelia.out, 
+                        function(i) lm(log(waste_pc) ~ log(gdp_pc) + log(pop), data = i))
+
+# Pull out coefficients and standard errors to get an MI average
+coefs.amelia <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,1]))
+ses.amelia <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,2]))
+
+mi.meld(coefs.amelia, ses.amelia)
