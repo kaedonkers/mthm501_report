@@ -6,6 +6,10 @@ library(ggplot2)
 # Summarise the now tidied dataset
 summary(data)
 
+
+
+
+
 # Find max outliers
 data %>%
   slice_max(waste_pc, n=20)
