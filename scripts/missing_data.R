@@ -45,29 +45,45 @@ summary(mod.rmnas)
 ## @knitr multiple_imputation
 
 # 2. Multiple imputation
+# Use Amelia package to generate a multiple imputation dataset
 library(Amelia)
 
+# Set a seed so that the "random" numbers are reproducible
 set.seed(467)
 data.mi <- amelia(x = as.data.frame(data),   # Convert to dataframe to overcome tibble error
-                  m = 10,                    # Repeat 10 times
+                  m = 150,                    # Repeat 10 times
                   idvars = c("code", "name"),# Variables not imputed
                   logs = c("gdp_pc", "waste", "pop"), # Log transform all vars
                   p2s = 1)                   # Text based output
 
+
+## @knitr missmap
+# Plot missing a value map
+missmap(data.mi)
+
+
+## @knitr mi_lm
 # Calculate waste per capita for all imputations
 data.mi.mutate <- lapply(data.mi$imputations, 
                          function(i) mutate(i, waste_pc=waste*1000/pop))
 
-# Fit linear model to all the imputations
+# Fit a linear model to all the imputations
 mod.mi <- lapply(data.mi.mutate, 
                  function(i) lm(log(waste_pc) ~ log(gdp_pc) * log(pop), data = i))
 
-# Pull out coefficients and standard errors to get an MI average
-mod.mi.coefs <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,1]))
-mod.mi.ses <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,2]))
+# Pull out coefficients and their standard errors from multiple imputation
+mod.mi.coefs <- do.call(rbind, lapply(mod.mi, function(i) coef(summary(i))[,1]))
+mod.mi.ses <- do.call(rbind, lapply(mod.mi, function(i) coef(summary(i))[,2]))
 
-mi.meld(coefs.amelia, ses.amelia)
+# Combine using mi.meld to get the "average" coefficients and their standard errors
+# for the whole multiple imputation
+mod.mi.fit <- mi.meld(mod.mi.coefs, mod.mi.ses)
 
-## @knitr missing_map
-# Plot missing value map
-missmap(imp_amelia)
+print(mod.mi.fit)
+# $q.mi
+#     (Intercept) log(gdp_pc)   log(pop) log(gdp_pc):log(pop)
+# [1,]    4.914278  -0.4530326 -0.6351182            0.0565703
+# 
+# $se.mi
+#      (Intercept) log(gdp_pc)   log(pop) log(gdp_pc):log(pop)
+# [1,]   0.7985467  0.07973106 0.05046899          0.005059416
