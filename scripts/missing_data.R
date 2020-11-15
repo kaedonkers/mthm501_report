@@ -1,97 +1,73 @@
 # Multiple strategies to dealing with missing data
 # 
-# General strategy is to deal with missings, 
+# General strategy is to deal with missing values, 
 # then fit a linear model to determine the effects of different missing value methods
 
+library(tidyverse)
 
+## @knitr combine_data 
+data <- waste %>%
+  left_join(gdp_pc) %>%
+  left_join(pop) 
+
+## @knitr remove_nas
+ 
 # 1. Remove NA entries
-d <- d_waste_pc %>%
-  filter(!is.na(waste_pc) & !is.na(gdp_pc))
 
-lm(log(waste_pc) ~ log(gdp_pc) + pop, data = d) %>%
-  summary()
+# Remove NA values from gdp_pc and pop columns then calculate waste per capita
+data.rmnas <- data %>%
+  filter(!is.na(gdp_pc) & !is.na(pop)) %>% 
+  mutate(waste_pc=waste*1000/pop) 
 
+# Fit a linear model of waste per capita vs GDP per capita and total population
+mod.rmnas = lm(log(waste_pc) ~ log(gdp_pc) * log(pop), data = data.rmnas)
 
-da <- d_waste_adj %>%
-  filter(!is.na(waste_pc_adj) & !is.na(gdp_pc) & !is.na(psw))
-
-lm(log(waste_pc_adj) ~ log(gdp_pc) + pop, data = da) %>%
-  summary()
-
-
-
-# ---
-# 2. Remove NA and outlier countries
-
-# Plot log-log to highlight outliers
-
-da %>% 
-  group_by(country) %>% 
-  summarise(max=max(waste_pc_adj)) %>% 
-  slice_max(max, n=5)
-# Botswana is the maximum outlier
-
-da %>% 
-  group_by(country) %>% 
-  summarise(min=min(waste_pc_adj)) %>% 
-  slice_min(min, n=5)
-# Zimbabwe and Samoe appear to be the lower outliers
+# Print a summary of the model parameters
+summary(mod.rmnas)
+# Residuals:
+#   Min      1Q  Median      3Q     Max 
+# -4.4657 -0.2641 -0.0299  0.2355  5.1317 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)           5.934065   0.802349   7.396 2.01e-13 ***
+#   log(gdp_pc)          -0.543428   0.080042  -6.789 1.46e-11 ***
+#   log(pop)             -0.686317   0.050511 -13.587  < 2e-16 ***
+#   log(gdp_pc):log(pop)  0.060929   0.005061  12.038  < 2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.6176 on 2135 degrees of freedom
+# Multiple R-squared:  0.5234,	Adjusted R-squared:  0.5227 
+# F-statistic: 781.5 on 3 and 2135 DF,  p-value: < 2.2e-16
 
 
+## @knitr multiple_imputation
 
-
-
-# ---
-# 3. Use UN imputation method
-# https://uneplive.unep.org/media/docs/graphs/aggregation_methods.pdf
-# 1. Gaps <= 10 years = exponential interpolation
-# 2. Ends = 3 year extrapolation of last value
-# 3. Gaps > 10 years = 3 year extrapolation each end
-
-
-
-
-
-
-
-# ---
-# 4. Multiple imputation (country clustered)
-# - Might need removal of low entry countries with NAs?
+# 2. Multiple imputation
 library(Amelia)
 
-data <- select(waste, c("Country or Area", "Year", "Value")) %>%
-  rename("waste"="Value") %>%
-  filter(!is.na(Year)) %>%
-  left_join(select(gdp, -Item)) %>%
-  rename("gdp_pc"="Value") %>%
-  left_join(pop_tot) %>%
-  rename("pop"="Value") %>%
-  rename("country"="Country or Area") %>%
-  rename("year" = "Year")
-
 set.seed(467)
-imp_amelia <- amelia(x = as.data.frame(data), #dataframe to overcome tibble error
-                     m = 5, # repeat 5 times
-                     idvars="country", #not imputed
-                     logs = c("gdp_pc", "waste", "pop"), #all vars need log transform
-                     p2s = 1) #Some textual output
+data.mi <- amelia(x = as.data.frame(data),   # Convert to dataframe to overcome tibble error
+                  m = 10,                    # Repeat 10 times
+                  idvars = c("code", "name"),# Variables not imputed
+                  logs = c("gdp_pc", "waste", "pop"), # Log transform all vars
+                  p2s = 1)                   # Text based output
 
-# TODO: How to stop producing negative imputations?
-# Read docs -> https://cran.r-project.org/web/packages/Amelia/vignettes/amelia.pdf
-# SOLUTION: Log pop also -> otherwise it thinks the population is normally distributed around low values, and bleeds over into negatives
-
-# Plot missings
-missmap(imp_amelia)
-
-# Calculate 
-mutate.amelia.out <- lapply(imp_amelia$imputations, function(i) mutate(i, waste_pc=waste*1000/pop))
+# Calculate waste per capita for all imputations
+data.mi.mutate <- lapply(data.mi$imputations, 
+                         function(i) mutate(i, waste_pc=waste*1000/pop))
 
 # Fit linear model to all the imputations
-lm.amelia.out <- lapply(mutate.amelia.out, 
-                        function(i) lm(log(waste_pc) ~ log(gdp_pc) + log(pop), data = i))
+mod.mi <- lapply(data.mi.mutate, 
+                 function(i) lm(log(waste_pc) ~ log(gdp_pc) * log(pop), data = i))
 
 # Pull out coefficients and standard errors to get an MI average
-coefs.amelia <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,1]))
-ses.amelia <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,2]))
+mod.mi.coefs <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,1]))
+mod.mi.ses <- do.call(rbind, lapply(lm.amelia.out, function(i) coef(summary(i))[,2]))
 
 mi.meld(coefs.amelia, ses.amelia)
+
+## @knitr missing_map
+# Plot missing value map
+missmap(imp_amelia)

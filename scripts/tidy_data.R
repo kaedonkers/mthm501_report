@@ -1,47 +1,39 @@
 # Data cleaning
-# 
+#
+## @knitr load_data 
 library(tidyverse)
 library(here)
 
-gdp <- read_csv(here::here("data/gdp_UNdata_Export_20201112_074503531.csv"))
-waste <- read_csv(here::here("data/wastepercapita_UNdata_Export_20201112_074648716.csv"))
+# Load and clean the data similarly for each dataset:
+# 1. Load data from CSV files
+# 2. Select only the columns country code, country name, year and value
+# 3. Rename columns with more easy to use and descriptive names
+# 4. Remove footnotes at bottom of dataframe, which were present in the CSV
+#    (denoted by NAs in year column)
 
-pop <- read_csv(here::here("data/pop_UNdata_Export_20201112_075133467.csv"))
-psw <- read_csv(here::here("data/popservedwaste_UNdata_Export_20201112_074710796.csv"))
-
-# Filter pop to contain total national population of both sexes
-pop_tot <- filter(pop, Sex=="Both Sexes" & Area=="Total") %>%
-  + select(c("Country or Area", "Year", "Value"))
-
-# Convert psw year from chr to num, and adjust Value from percentage to proportion
-psw <- mutate(psw, Year=as.numeric(Year)) %>%
-  mutate(Value=Value/100)
-
-# Wrangle into one df
-data <- select(waste, c("Country or Area", "Year", "Value")) %>%
+waste <- read_csv(here::here("data/waste_UNdata_world_1990-2016.csv")) %>%  # 1.
+  select(c("Country or Area Code", "Country or Area", "Year", "Value")) %>% # 2.
+  rename("code"="Country or Area Code") %>%                                 # 3.
+  rename("name"="Country or Area") %>%
+  rename("year" = "Year") %>%
   rename("waste"="Value") %>%
-  filter(!is.na(Year)) %>%
-  left_join(select(gdp, -Item)) %>%
+  filter(!is.na(year))                                                      # 4.
+
+gdp_pc <- read_csv(here::here("data/gdp_UNdata_world_1989-2018.csv")) %>%
+  select(c("Country or Area Code", "Country or Area", "Year", "Value")) %>%
+  rename("code"="Country or Area Code") %>%
+  rename("name"="Country or Area") %>%
+  rename("year" = "Year") %>%
   rename("gdp_pc"="Value") %>%
-  left_join(pop_tot) %>%
-  rename("pop"="Value")  %>%
-  left_join(select(psw, -`Value Footnotes`, -Unit)) %>%
-  rename("psw"="Value") %>%
-  rename("country"="Country or Area") %>%
-  rename("year" = "Year")
+  filter(!is.na(year))
 
-# Waste in 1000s tonnes -> tonnes per capita
-data <- mutate(data, waste_pc=waste*1000/pop)
+pop <- read_csv(here::here("data/pop_UNdata_world_1990-2020.csv")) %>%
+  # Use only population values for both sexes and the country's total area
+  filter(Sex=="Both Sexes" & Area=="Total") %>%
+  select(c("Country or Area Code", "Country or Area", "Year", "Value")) %>%
+  rename("code"="Country or Area Code") %>%
+  rename("name"="Country or Area") %>%
+  rename("year" = "Year") %>%
+  rename("pop"="Value") %>%
+  filter(!is.na(year))
 
-# Adjust waste_pc to only reflect population actually served by waste collection
-data <- mutate(data, waste_pc_adj=waste*1000/(pop*psw))
-
-# Split data into two; 
-# - one with waste_pc as the response variable
-# - the other with waste_pc_adj as the response variable
-
-d_waste_pc <- data %>%
-  select(-waste, -waste_pc_adj, -psw)
-
-d_waste_adj <- data %>%
-  select(-waste, -waste_pc)
