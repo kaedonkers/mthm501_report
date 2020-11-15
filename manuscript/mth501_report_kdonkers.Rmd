@@ -10,7 +10,14 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message=FALSE)
+library(here)
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, cache=FALSE, warning=FALSE, include = FALSE)
+knitr::read_chunk(here::here('scripts/tidy_data.R'))
+knitr::read_chunk(here::here('scripts/inspect_data.R'))
+knitr::read_chunk(here::here('scripts/geospatial_tidy.R'))
+knitr::read_chunk(here::here('scripts/plotting.R'))
+knitr::read_chunk(here::here('scripts/missing_data.R'))
+knitr::read_chunk(here::here('scripts/linear_models.R'))
 ```
 
 # *Introduction (incl. pop hypothesis)
@@ -49,6 +56,8 @@ Limitations of the approach are discussed and final analyses presented in the co
 <!-- 8. Limitations of approach discussed. -->
 
 # *Data
+```{r load_data}
+```
 1. Data sources and types
 2. Visualisation:
 - Table of variables
@@ -74,14 +83,20 @@ Municipal waste per capita was calculate by dividing the total municipal waste b
 
 
 ## Data variability
-A summary of each of the datasets is presented in Table {ref}.
-It shows that ...
+Each of the datasets don't cover exactly the same set of countries or years.
+To view this variability, a summary of each of the datasets is presented in Table {ref}.
+
+<!-- Table -->
+
+
 
 ** TABLE SHOWING SUMMARIES **
 ||Number of countries|Years|Number of values|Max|Min|Quartiles?|
 <!-- ```{r table_summary, echo=FALSE, results="asis"} -->
 <!-- knitr::kable(data_sum, caption="Dataset summary statistics") -->
 <!-- ``` -->
+
+It shows that ...
 
 For each of the datasets (waste, GDP, population) we can plot the distributions of the values and geographical spreads
 
@@ -142,6 +157,8 @@ The multiple imputed datasets allowed a level of uncertainty to be calculated fo
 - Data on this available -> {ref}
 - Multiple imputation should have been conducted on the order of the missing values i.e. ~100 times. Did not have computing capacity to do so.
 - MI sampling should probably have been grouped by country, since inter-country variability is probably less normally distributed than intra-country variability.
+- Removing outliers may improve model fitting
+- Compare with UN imputation method
 
 # *Conclusion
 It would appear that there is a **???** relationship between municipal waste generation per capita and GDP per capita, and a minimally negative correlation between municipal waste generation per capita and total population.
@@ -154,6 +171,9 @@ It can therefore be said that there is **weak???** correlation between municipal
 \pagebreak
 
 # *References
+
+- GitHub repo for this project
+
 
 # Data Sources
 
