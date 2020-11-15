@@ -13,22 +13,22 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE)
 ```
 
-# Introduction
+# *Introduction
 The UN have Sustainable Development Goals.
 One of which is to reduce waste (SDG12?)
 However another is to increase human prosperity (SDGX?)
 A measure of prosperity if Gross Domestic Product (GDP).
 
-What is the relationship between GDP and household waste?
+What is the relationship between gross domestic product (GDP) and household waste?
 One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected.
 On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
 
-United Nations Statistics Division collects data from member states.
+United Nations Statistics Division (UNSD) collects data from member states.
 
 # Objectives
 The aim of this investigation is to determine whether there is a relationship 
 between national GDP and municipal waste generation. 
-After obtaining data from the United Nations Statistics Division, we must tidy the data. 
+After obtaining data from the UNSD, we must tidy the data. 
 This involves combining multiple datasets and processing variable so they are comparable.
 Next we should visualise each variable to determine how values are distributed,
 both statistically and geospatially.
@@ -48,38 +48,100 @@ Limitations of the approach are discussed and final analyses presented in the co
 <!-- 7. Final analyses presented. -->
 <!-- 8. Limitations of approach discussed. -->
 
-# Data
-Use data from UNStats
-Data on GDP, municipal waste collection per capita, population served by waste collection and population. 
-All data is contains annual values 
+# *Data
+1. Data sources and types
+2. Visualisation:
+- Table of variables
+- Distribution of values (looks like all should be logged)
+- Map of values
+3. Data merging
+4. Missing data
+- NA removal
+- Multiple imputation
+
+## Data sources
+UNSD provides datasets open to the public on various topics related to international development, economic metrics and trade. 
+For this investigation data on total municipal waste generation and GDP were needed. 
+Total municipal waste generation was available for the years 1990-2016, aggregated by year and country. [cit]
+GPD per capita data was available for the years 1970-2018, aggregated by year and country. [cit]
+Data for the years 1989-2018 were downloaded for this investigation.
+To allow fair comparison between waste generation and GDP, the waste data was processed to represent municipal waste generated per capita.
+To calculate this we needed population data for each of the corresponding countries and years.
+Population data was available from UNSD for the years 1948-2020, aggregated by year and country.
+Data for the years 1990-2020 were downloaded for this investigation.
+All data was downloaded as Comma Separated Values (CSV) format.
+Municipal waste per capita was calculate by dividing the total municipal waste by the total population, for each year and country in the dataset.
+
+
+## Data variability
+A summary of each of the datasets is presented in Table {ref}.
+It shows that ...
+
+** TABLE SHOWING SUMMARIES **
+||Number of countries|Years|Number of values|Max|Min|Quartiles?|
+<!-- ```{r table_summary, echo=FALSE, results="asis"} -->
+<!-- knitr::kable(data_sum, caption="Dataset summary statistics") -->
+<!-- ``` -->
+
+For each of the datasets (waste, GDP, population) we can plot the distributions of the values and geographical spreads
+
+```{r plot_waste_dist, echo=FALSE}
+library(patchwork)
+
+# make plots
+# p1 = hist
+# p2 = hist(log)
+# p3 = map(latest year)
+# (p1 + p2)/p3
+```
+
+<!-- For each plot -->
+We can see from...
+
+## Data merging
+This investigation is trying to understand the variation of municipal waste generation with GDP and possibly population.
+Therefore we are treating municipal waste generation as a response variable,
+and GDP and population as explanatory variables.
+We can merge our datasets together, but as we saw in above {ref} each dataset does not cover the same number of countries.
+Given municipal waste is our response variable, it was chosen to keep all the data from this dataset and merge on only matching countries and years from the other two datasets.
+
+
+## Missing data
+A consequence of merging datasets, as outlined above, was that some of the values for GDP and/or population for some combinations of country and years were missing.
+
+<!-- Table of showing number of missing values per variable-->
 
 
 
-# Analysis & Results
 
-# Limitations
+# *Analysis & Results
 
-# Conclusion
+
+
+
+# *Limitations
+
+# *Conclusion
 
 \pagebreak
 
-# References
+# *References
 
 # Data Sources
 
-EU GDP (NAMA_10_GDP) -> https://ec.europa.eu/eurostat/databrowser/view/NAMA_10_GDP__custom_188199/default/table
+<!-- EU GDP (NAMA_10_GDP) -> https://ec.europa.eu/eurostat/databrowser/view/NAMA_10_GDP__custom_188199/default/table -->
 
-EU Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table
+<!-- EU Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table -->
 
----
+<!-- --- -->
 UN GDP
-https://data.un.org/Data.aspx?q=gdp&d=SNAAMA&f=grID:101;currID:USD;pcFlag:1&c=2,3,5,6&s=_crEngNameOrderBy:asc,yr:desc&v=1
+https://data.un.org/Data.aspx?q=gdp&d=SNAAMA&f=grID%3a101%3bcurrID%3aUSD%3bpcFlag%3atrue%3byr%3a1989%2c1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018&c=1,2,3,5,6&s=_crEngNameOrderBy:asc,yr:desc&v=1
 
 UN Waste
-https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1814&c=2,3,4,5&s=countryName:asc,yr:desc&v=1
+https://data.un.org/Data.aspx?q=waste+datamart%5BENV%5D&d=ENV&f=variableID%3a1814&c=1,2,3,4,5&s=countryName:asc,yr:desc&v=1
 
 UN Pop
-https://data.un.org/Data.aspx?q=population+datamart%5bENV%2cPOP%5d&d=POP&f=tableCode:1&c=2,3,6,8,10,12,13,14&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
+https://data.un.org/Data.aspx?q=population+datamart%5BENV%2CPOP%5D&d=POP&f=tableCode%3a1%3brefYear%3a1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018%2c2019%2c2020&c=1,2,3,6,8,10,12,13,14&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
 
-UN Pop served by waste collection
-https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1878&c=2,3,4,5&s=countryName:asc,yr:desc&v=1
+<!-- UN Pop served by waste collection -->
+<!-- https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1878&c=2,3,4,5&s=countryName:asc,yr:desc&v=1 -->
