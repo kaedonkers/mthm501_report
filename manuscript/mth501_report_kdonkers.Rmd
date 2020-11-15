@@ -23,21 +23,30 @@ What is the relationship between GDP and household waste?
 One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected.
 On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
 
-The European Union (EU) has a statistics body, EuroStat, which collects data on member states.
-OR
 United Nations Statistics Division collects data from member states.
 
 # Objectives
-1. Tidy data
-2. Fix missing data (imputation?)
-3. Map the data (gdp, waste)
-4. Linear model across countries (pick a year), across time (pick a country), then multi-variable linear model.
-5*. Factor in population?
-6*. Factor in clustering across regions?
-7. Final analyses presented.
-8. Limitations of approach discussed.
+The aim of this investigation is to determine whether there is a relationship 
+between national GDP and municipal waste generation. 
+After obtaining data from the United Nations Statistics Division, we must tidy the data. 
+This involves combining multiple datasets and processing variable so they are comparable.
+Next we should visualise each variable to determine how values are distributed,
+both statistically and geospatially.
+The datasets being merged do not all cover the same set of countries.
+Therefore the merged dataset will contain some missing values.
+This is addressed by two methods: removal and multiple imputation.
+Linear models are fitted to both "corrected" datasets to determine whether GDP and population have an effect on municipal waste generation,
+and as an evaluation of the missingness methods.
+Limitations of the approach are discussed and final analyses presented in the conclusion.
 
-
+<!-- 1. Tidy data -->
+<!-- 2. Map the data (gdp, waste) -->
+<!-- 3. Fix missing data (multiple imputation?) -->
+<!-- 4. Linear model across countries (pick a year), across time (pick a country), then multi-variable linear model. -->
+<!-- 5*. Factor in population? -->
+<!-- 6*. Factor in clustering across regions? -->
+<!-- 7. Final analyses presented. -->
+<!-- 8. Limitations of approach discussed. -->
 
 # Data
 Use data from UNStats
@@ -45,7 +54,8 @@ Data on GDP, municipal waste collection per capita, population served by waste c
 All data is contains annual values 
 
 
-# Results
+
+# Analysis & Results
 
 # Limitations
 
