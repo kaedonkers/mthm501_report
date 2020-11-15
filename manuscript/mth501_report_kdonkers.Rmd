@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE)
 ```
 
-# *Introduction
+# *Introduction (incl. pop hypothesis)
 The UN have Sustainable Development Goals.
 One of which is to reduce waste (SDG12?)
 However another is to increase human prosperity (SDGX?)
@@ -97,6 +97,8 @@ library(patchwork)
 
 <!-- For each plot -->
 We can see from...
+- Log-normal distribution
+- Not all same countries covered
 
 ## Data merging
 This investigation is trying to understand the variation of municipal waste generation with GDP and possibly population.
@@ -111,17 +113,43 @@ A consequence of merging datasets, as outlined above, was that some of the value
 
 <!-- Table of showing number of missing values per variable-->
 
+The reasons for these missing entries is that, despite the municipal waste data containing data for fewer countries than GDP or population, not every country in the UN was included in those datasets for every year covered.
+It is unclear why this is the case.
+Given that the data is voluntarily submitted to the UN, 
+some of it could be explained as Missing Completely At Random (MCAR)
+given that some countries could simply have missed the submission deadline for particular years or a country wasn't aware of it's obligations to report for a number of years e.g. an new/young UN member state.
 
+One proposed strategy for dealing with these missing data values is to 
+simply remove any entries which have a missing value for any of the variables.
+This leads to a ~2% smaller dataset.
+
+Another method would be to use multiple imputation to generate multiple possible complete dataset by sampling (the logarithm of) the non-missing values for each variable.
+This was conducted using the `Amelia` package to create ten imputed datasets.
+The benefit of this was that all values of the response variable, total waste, could be retained and converted to waste per capita given the now complete number of population values.
+The multiple imputed datasets allowed a level of uncertainty to be calculated for the resulting linear models.
 
 
 # *Analysis & Results
-
+1. Linear model with NAs removed -> waste_pc ~ gdp_pc + pop + gdp_pc:pop
+2. Linear model with MI dataset -> waste_pc ~ gdp_pc + pop + gdp_pc:pop
+3. Compare the resultin coefficients, standard errors and R^2 values
 
 
 
 # *Limitations
 
+- Didn't account for percentage of population served by municipal waste collection -> skewed results to lower waste_pc
+- Data on this available -> {ref}
+- Multiple imputation should have been conducted on the order of the missing values i.e. ~100 times. Did not have computing capacity to do so.
+- MI sampling should probably have been grouped by country, since inter-country variability is probably less normally distributed than intra-country variability.
+
 # *Conclusion
+It would appear that there is a **???** relationship between municipal waste generation per capita and GDP per capita, and a minimally negative correlation between municipal waste generation per capita and total population.
+The R$^2$ values for the relationships, regardless if using data which was missing-cleansed or multiply-imputed, was ~50% and so didn't particularly well represent the data.
+Standard errors were ...
+
+It can therefore be said that there is **weak???** correlation between municipal waste generation and GDP, but it is likely that the relationship is much better explained by incporporating other development indicators or social factors.
+
 
 \pagebreak
 
