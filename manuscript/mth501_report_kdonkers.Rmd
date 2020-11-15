@@ -3,15 +3,16 @@ title: "MTHM501 Assessment Report"
 author: "Kevin Donkers (EI CDT) - 700063874"
 date: "11/11/2020"
 output:
+  pdf_document: bookdown::pdf_document2
   html_document:
     fig_caption: yes
     smart: no
-  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 library(here)
-knitr::opts_chunk$set(echo = FALSE, message=FALSE, cache=FALSE, warning=FALSE, include = FALSE)
+library(bookdown)
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, cache=TRUE, warning=FALSE, include = FALSE)
 knitr::read_chunk(here::here('scripts/tidy_data.R'))
 knitr::read_chunk(here::here('scripts/inspect_data.R'))
 knitr::read_chunk(here::here('scripts/geospatial_tidy.R'))
@@ -20,81 +21,63 @@ knitr::read_chunk(here::here('scripts/missing_data.R'))
 knitr::read_chunk(here::here('scripts/linear_models.R'))
 ```
 
-# *Introduction (incl. pop hypothesis)
-The UN have Sustainable Development Goals.
-One of which is to reduce waste (SDG12?)
-However another is to increase human prosperity (SDGX?)
-A measure of prosperity if Gross Domestic Product (GDP).
+# \*Introduction (incl. pop hypothesis)
 
-What is the relationship between gross domestic product (GDP) and household waste?
-One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected.
-On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
+The UN have Sustainable Development Goals. One of which is to reduce waste (SDG12?) However another is to increase human prosperity (SDGX?) A measure of prosperity if Gross Domestic Product (GDP).
+
+What is the relationship between gross domestic product (GDP) and household waste? One theory would be that increased GDP is linked to an increase in consumerism, and so a positive correlation would be expected. On the other hand, high GDP usually means a country has more money to spend on infrastructure, hence a higher recycling rate would be expected and thus a negative correlation would be expected.
 
 United Nations Statistics Division (UNSD) collects data from member states.
 
 # Objectives
-The aim of this investigation is to determine whether there is a relationship 
-between national GDP and municipal waste generation. 
-After obtaining data from the UNSD, we must tidy the data. 
-This involves combining multiple datasets and processing variable so they are comparable.
-Next we should visualise each variable to determine how values are distributed,
-both statistically and geospatially.
-The datasets being merged do not all cover the same set of countries.
-Therefore the merged dataset will contain some missing values.
-This is addressed by two methods: removal and multiple imputation.
-Linear models are fitted to both "corrected" datasets to determine whether GDP and population have an effect on municipal waste generation,
-and as an evaluation of the missingness methods.
-Limitations of the approach are discussed and final analyses presented in the conclusion.
+
+The aim of this investigation is to determine whether there is a relationship between national GDP and municipal waste generation. After obtaining data from the UNSD, we must tidy the data. This involves combining multiple datasets and processing variable so they are comparable. Next we should visualise each variable to determine how values are distributed, both statistically and geospatially. The datasets being merged do not all cover the same set of countries. Therefore the merged dataset will contain some missing values. This is addressed by two methods: removal and multiple imputation. Linear models are fitted to both "corrected" datasets to determine whether GDP and population have an effect on municipal waste generation, and as an evaluation of the missingness methods. Limitations of the approach are discussed and final analyses presented in the conclusion.
 
 <!-- 1. Tidy data -->
+
 <!-- 2. Map the data (gdp, waste) -->
+
 <!-- 3. Fix missing data (multiple imputation?) -->
+
 <!-- 4. Linear model across countries (pick a year), across time (pick a country), then multi-variable linear model. -->
+
 <!-- 5*. Factor in population? -->
+
 <!-- 6*. Factor in clustering across regions? -->
+
 <!-- 7. Final analyses presented. -->
+
 <!-- 8. Limitations of approach discussed. -->
 
-# *Data
+# \*Data
+
 ```{r load_data}
 ```
-1. Data sources and types
-2. Visualisation:
-- Table of variables
-- Distribution of values (looks like all should be logged)
-- Map of values
-3. Data merging
-4. Missing data
-- NA removal
-- Multiple imputation
+
+1.  Data sources and types
+2.  Visualisation:
+
+-   Table of variables
+-   Distribution of values (looks like all should be logged)
+-   Map of values
+
+3.  Data merging
+4.  Missing data
+
+-   NA removal
+-   Multiple imputation
 
 ## Data sources
-UNSD provides datasets open to the public on various topics related to international development, economic metrics and trade. 
-For this investigation data on total municipal waste generation and GDP were needed. 
-Total municipal waste generation was available for the years 1990-2016, aggregated by year and country. [cit]
-GPD per capita data was available for the years 1970-2018, aggregated by year and country. [cit]
-Data for the years 1989-2018 were downloaded for this investigation.
-To allow fair comparison between waste generation and GDP, the waste data was processed to represent municipal waste generated per capita.
-To calculate this we needed population data for each of the corresponding countries and years.
-Population data was available from UNSD for the years 1948-2020, aggregated by year and country.
-Data for the years 1990-2020 were downloaded for this investigation.
-All data was downloaded as Comma Separated Values (CSV) format.
-Municipal waste per capita was calculate by dividing the total municipal waste by the total population, for each year and country in the dataset.
 
+UNSD provides datasets open to the public on various topics related to international development, economic metrics and trade. For this investigation data on total municipal waste generation and GDP were needed. Total municipal waste generation was available for the years 1990-2016, aggregated by year and country. [cit] GPD per capita data was available for the years 1970-2018, aggregated by year and country. [cit] Data for the years 1989-2018 were downloaded for this investigation. To allow fair comparison between waste generation and GDP, the waste data was processed to represent municipal waste generated per capita. To calculate this we needed population data for each of the corresponding countries and years. Population data was available from UNSD for the years 1948-2020, aggregated by year and country. Data for the years 1990-2020 were downloaded for this investigation. All data was downloaded as Comma Separated Values (CSV) format. Municipal waste per capita was calculate by dividing the total municipal waste by the total population, for each year and country in the dataset.
 
 ## Data variability
-Each of the datasets don't cover exactly the same set of countries or years.
-To view this variability, a summary of each of the datasets is presented in Table {ref}.
+
+Each of the datasets don't cover exactly the same set of countries or years. To view this variability, a summary of each of the datasets is presented in Table {ref}.
 
 <!-- Table -->
 
-
-
-** TABLE SHOWING SUMMARIES **
-||Number of countries|Years|Number of values|Max|Min|Quartiles?|
-<!-- ```{r table_summary, echo=FALSE, results="asis"} -->
-<!-- knitr::kable(data_sum, caption="Dataset summary statistics") -->
-<!-- ``` -->
+\*\* TABLE SHOWING SUMMARIES \*\* \|\|Number of countries\|Years\|Number of values\|Max\|Min\|Quartiles?\| <!-- ```{r table_summary, echo=FALSE, results="asis"} --> <!-- knitr::kable(data_sum, caption="Dataset summary statistics") --> <!-- ``` -->
 
 It shows that ...
 
@@ -111,69 +94,60 @@ library(patchwork)
 ```
 
 <!-- For each plot -->
-We can see from...
-- Log-normal distribution
-- Not all same countries covered
+
+We can see from... - Log-normal distribution - Not all same countries covered
 
 ## Data merging
-This investigation is trying to understand the variation of municipal waste generation with GDP and possibly population.
-Therefore we are treating municipal waste generation as a response variable,
-and GDP and population as explanatory variables.
-We can merge our datasets together, but as we saw in above {ref} each dataset does not cover the same number of countries.
-Given municipal waste is our response variable, it was chosen to keep all the data from this dataset and merge on only matching countries and years from the other two datasets.
 
+This investigation is trying to understand the variation of municipal waste generation with GDP and possibly population. Therefore we are treating municipal waste generation as a response variable, and GDP and population as explanatory variables. We can merge our datasets together, but as we saw in above {ref} each dataset does not cover the same number of countries. Given municipal waste is our response variable, it was chosen to keep all the data from this dataset and merge on only matching countries and years from the other two datasets.
+
+```{r combine_data}
+```
 
 ## Missing data
+
 A consequence of merging datasets, as outlined above, was that some of the values for GDP and/or population for some combinations of country and years were missing.
 
 <!-- Table of showing number of missing values per variable-->
 
-The reasons for these missing entries is that, despite the municipal waste data containing data for fewer countries than GDP or population, not every country in the UN was included in those datasets for every year covered.
-It is unclear why this is the case.
-Given that the data is voluntarily submitted to the UN, 
-some of it could be explained as Missing Completely At Random (MCAR)
-given that some countries could simply have missed the submission deadline for particular years or a country wasn't aware of it's obligations to report for a number of years e.g. an new/young UN member state.
+The reasons for these missing entries is that, despite the municipal waste data containing data for fewer countries than GDP or population, not every country in the UN was included in those datasets for every year covered. It is unclear why this is the case. Given that the data is voluntarily submitted to the UN, some of it could be explained as Missing Completely At Random (MCAR) given that some countries could simply have missed the submission deadline for particular years or a country wasn't aware of it's obligations to report for a number of years e.g. an new/young UN member state.
 
-One proposed strategy for dealing with these missing data values is to 
-simply remove any entries which have a missing value for any of the variables.
-This leads to a ~2% smaller dataset.
+One proposed strategy for dealing with these missing data values is to simply remove any entries which have a missing value for any of the variables. This leads to a \~2% smaller dataset, as seen in Figure \@ref(fig:missmap).
 
-Another method would be to use multiple imputation to generate multiple possible complete dataset by sampling (the logarithm of) the non-missing values for each variable.
-This was conducted using the `Amelia` package to create ten imputed datasets.
-The benefit of this was that all values of the response variable, total waste, could be retained and converted to waste per capita given the now complete number of population values.
-The multiple imputed datasets allowed a level of uncertainty to be calculated for the resulting linear models.
+```{r multiple_imputation}
+```
 
+```{r missmap, include=TRUE, fig.cap="This graphic highlights the missing values in the merged datset. There are 142 missing values in the GDP per capita variable (`gdp_pc`) and 89 missing values in the total population variable (`pop`)."}
+```
 
-# *Analysis & Results
-1. Linear model with NAs removed -> waste_pc ~ gdp_pc + pop + gdp_pc:pop
-2. Linear model with MI dataset -> waste_pc ~ gdp_pc + pop + gdp_pc:pop
-3. Compare the resultin coefficients, standard errors and R^2 values
+Another method would be to use multiple imputation to generate multiple possible complete dataset by sampling (the logarithm of) the non-missing values for each variable. This was conducted using the `Amelia` package to create ten imputed datasets. The benefit of this was that all values of the response variable, total waste, could be retained and converted to waste per capita given the now complete number of population values. The multiple imputed datasets allowed a level of uncertainty to be calculated for the resulting linear models.
 
+# \*Analysis & Results
 
+1.  Linear model with NAs removed -\> waste_pc \~ gdp_pc + pop + gdp_pc:pop
+2.  Linear model with MI dataset -\> waste_pc \~ gdp_pc + pop + gdp_pc:pop
+3.  Compare the resultin coefficients, standard errors and R\^2 values
 
-# *Limitations
+# \*Limitations
 
-- Didn't account for percentage of population served by municipal waste collection -> skewed results to lower waste_pc
-- Data on this available -> {ref}
-- Multiple imputation should have been conducted on the order of the missing values i.e. ~100 times. Did not have computing capacity to do so.
-- MI sampling should probably have been grouped by country, since inter-country variability is probably less normally distributed than intra-country variability.
-- Removing outliers may improve model fitting
-- Compare with UN imputation method
+-   Didn't account for percentage of population served by municipal waste collection -\> skewed results to lower waste_pc
+-   Data on this available -\> {ref}
+-   Multiple imputation should have been conducted on the order of the missing values i.e. \~100 times. Did not have computing capacity to do so.
+-   MI sampling should probably have been grouped by country, since inter-country variability is probably less normally distributed than intra-country variability.
+-   Removing outliers may improve model fitting
+-   Compare with UN imputation method
 
-# *Conclusion
-It would appear that there is a **???** relationship between municipal waste generation per capita and GDP per capita, and a minimally negative correlation between municipal waste generation per capita and total population.
-The R$^2$ values for the relationships, regardless if using data which was missing-cleansed or multiply-imputed, was ~50% and so didn't particularly well represent the data.
-Standard errors were ...
+# \*Conclusion
+
+It would appear that there is a **???** relationship between municipal waste generation per capita and GDP per capita, and a minimally negative correlation between municipal waste generation per capita and total population. The R$^2$ values for the relationships, regardless if using data which was missing-cleansed or multiply-imputed, was \~50% and so didn't particularly well represent the data. Standard errors were ...
 
 It can therefore be said that there is **weak???** correlation between municipal waste generation and GDP, but it is likely that the relationship is much better explained by incporporating other development indicators or social factors.
 
-
 \pagebreak
 
-# *References
+# \*References
 
-- GitHub repo for this project
-
+-   GitHub repo for this project
 
 # Data Sources
 
@@ -182,14 +156,13 @@ It can therefore be said that there is **weak???** correlation between municipal
 <!-- EU Municipal waste (CEI_PC) -> https://ec.europa.eu/eurostat/databrowser/view/cei_pc031/default/table -->
 
 <!-- --- -->
-UN GDP
-https://data.un.org/Data.aspx?q=gdp&d=SNAAMA&f=grID%3a101%3bcurrID%3aUSD%3bpcFlag%3atrue%3byr%3a1989%2c1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018&c=1,2,3,5,6&s=_crEngNameOrderBy:asc,yr:desc&v=1
 
-UN Waste
-https://data.un.org/Data.aspx?q=waste+datamart%5BENV%5D&d=ENV&f=variableID%3a1814&c=1,2,3,4,5&s=countryName:asc,yr:desc&v=1
+UN GDP <https://data.un.org/Data.aspx?q=gdp&d=SNAAMA&f=grID%3a101%3bcurrID%3aUSD%3bpcFlag%3atrue%3byr%3a1989%2c1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018&c=1,2,3,5,6&s=_crEngNameOrderBy:asc,yr:desc&v=1>
 
-UN Pop
-https://data.un.org/Data.aspx?q=population+datamart%5BENV%2CPOP%5D&d=POP&f=tableCode%3a1%3brefYear%3a1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018%2c2019%2c2020&c=1,2,3,6,8,10,12,13,14&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
+UN Waste <https://data.un.org/Data.aspx?q=waste+datamart%5BENV%5D&d=ENV&f=variableID%3a1814&c=1,2,3,4,5&s=countryName:asc,yr:desc&v=1>
+
+UN Pop <https://data.un.org/Data.aspx?q=population+datamart%5BENV%2CPOP%5D&d=POP&f=tableCode%3a1%3brefYear%3a1990%2c1991%2c1992%2c1993%2c1994%2c1995%2c1996%2c1997%2c1998%2c1999%2c2000%2c2001%2c2002%2c2003%2c2004%2c2005%2c2006%2c2007%2c2008%2c2009%2c2010%2c2011%2c2012%2c2013%2c2014%2c2015%2c2016%2c2017%2c2018%2c2019%2c2020&c=1,2,3,6,8,10,12,13,14&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1>
 
 <!-- UN Pop served by waste collection -->
+
 <!-- https://data.un.org/Data.aspx?q=waste+datamart%5bENV%5d&d=ENV&f=variableID:1878&c=2,3,4,5&s=countryName:asc,yr:desc&v=1 -->
