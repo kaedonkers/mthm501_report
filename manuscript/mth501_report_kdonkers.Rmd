@@ -3,8 +3,9 @@ title: "MTHM501 Assessment Report"
 author: "Kevin Donkers (EI CDT) - 700063874"
 date: "11/11/2020"
 output:
-  pdf_document: bookdown::pdf_document2
-  html_document:
+  bookdown::pdf_document2:
+    fig_caption: yes
+  bookdown::html_document2:
     fig_caption: yes
     smart: no
 ---
@@ -72,7 +73,8 @@ The aim of this investigation is to determine whether there is a relationship be
 UNSD provides datasets open to the public on various topics related to international development, economic metrics and trade. For this investigation data on total municipal waste generation and GDP were needed. Total municipal waste generation was available for the years 1990-2016, aggregated by year and country. [cit] GPD per capita data was available for the years 1970-2018, aggregated by year and country. [cit] Data for the years 1989-2018 were downloaded for this investigation. To allow fair comparison between waste generation and GDP, the waste data was processed to represent municipal waste generated per capita. To calculate this we needed population data for each of the corresponding countries and years. Population data was available from UNSD for the years 1948-2020, aggregated by year and country. Data for the years 1990-2020 were downloaded for this investigation. All data was downloaded as Comma Separated Values (CSV) format. Municipal waste per capita was calculate by dividing the total municipal waste by the total population, for each year and country in the dataset.
 
 ## Data variability
-
+```{r plotsdataprep}
+```
 Each of the datasets don't cover exactly the same set of countries or years. To view this variability, a summary of each of the datasets is presented in Table {ref}.
 
 <!-- Table -->
@@ -83,17 +85,16 @@ It shows that ...
 
 For each of the datasets (waste, GDP, population) we can plot the distributions of the values and geographical spreads
 
-```{r plot_waste_dist, echo=FALSE}
-library(patchwork)
-
-# make plots
-# p1 = hist
-# p2 = hist(log)
-# p3 = map(latest year)
-# (p1 + p2)/p3
+```{r wasteplot, include=TRUE, fig.cap="Distribution of municipal waste values and countries for which the data is relevant."}
 ```
 
-<!-- For each plot -->
+
+
+```{r gdpplot, include=TRUE, fig.cap="Distribution of GDP per capita values and countries for which the data is relevant."}
+```
+
+```{r gdpplot, include=TRUE, fig.cap="Distribution of population values and countries for which the data is relevant."}
+```
 
 We can see from... - Log-normal distribution - Not all same countries covered
 
@@ -136,6 +137,7 @@ Another method would be to use multiple imputation to generate multiple possible
 -   MI sampling should probably have been grouped by country, since inter-country variability is probably less normally distributed than intra-country variability.
 -   Removing outliers may improve model fitting
 -   Compare with UN imputation method
+- Latitude values missing from global plots
 
 # \*Conclusion
 
