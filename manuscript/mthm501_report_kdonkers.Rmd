@@ -17,10 +17,7 @@ library(bookdown)
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, cache=FALSE, warning=FALSE, include = FALSE)
 knitr::read_chunk(here::here('scripts/tidy_data.R'))
 knitr::read_chunk(here::here('scripts/inspect_data.R'))
-knitr::read_chunk(here::here('scripts/geospatial_tidy.R'))
-knitr::read_chunk(here::here('scripts/plotting.R'))
 knitr::read_chunk(here::here('scripts/missing_data.R'))
-knitr::read_chunk(here::here('scripts/linear_models.R'))
 ```
 
 # Introduction
