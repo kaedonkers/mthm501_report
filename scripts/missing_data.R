@@ -29,7 +29,7 @@ summary(mod.rmnas)
 # -4.4657 -0.2641 -0.0299  0.2355  5.1317 
 # 
 # Coefficients:
-#   Estimate Std. Error t value Pr(>|t|)    
+#                      Estimate Std. Error t value Pr(>|t|)    
 # (Intercept)           5.934065   0.802349   7.396 2.01e-13 ***
 #   log(gdp_pc)          -0.543428   0.080042  -6.789 1.46e-11 ***
 #   log(pop)             -0.686317   0.050511 -13.587  < 2e-16 ***
@@ -87,3 +87,6 @@ print(mod.mi.fit)
 # $se.mi
 #      (Intercept) log(gdp_pc)   log(pop) log(gdp_pc):log(pop)
 # [1,]   0.7985467  0.07973106 0.05046899          0.005059416
+
+## @knitr modmifit
+knitr::kable(mod.mi.fit)

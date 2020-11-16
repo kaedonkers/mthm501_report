@@ -1,14 +1,12 @@
 # Inspect tidied data
 # 
 
-
-
-
-# Summarise the now tidied dataset
-summary(data)
-
-## @knitr tabcount
-# Create a dataframe with a count of each 
+# ## @knitr table
+# # Summarise the now tidied dataset
+# knitr::kable(summary(data))
+# 
+# ## @knitr tabcount
+# # Create a dataframe with a count of each 
 
 
 ## @knitr plotsdataprep
@@ -18,6 +16,7 @@ library(ggplot2)
 library(patchwork)
 library(rnaturalearth)
 library(latex2exp)
+library(sf)
 
 # Get geometries for plotting countries
 world <- ne_countries(scale = "small", returnclass = "sf") %>%
@@ -70,7 +69,8 @@ world_pop <- world %>%
 p1 = qplot(waste$waste, 
            geom="histogram",
            fill=I("darkslategray3")) +
-  labs(x="Municipal waste / 1000s tonnes", y="Count", title="Histograms")
+  labs(x="Municipal waste / 1000s tonnes", y="Count", 
+       title="Histograms: Distribution of total municipal waste values")
 
 p2 = qplot(log10(waste$waste), 
            geom="histogram",
@@ -81,19 +81,23 @@ p3 = ggplot(data = world) +
   geom_sf() +
   geom_sf(data=world_waste, aes(fill=waste), show.legend = TRUE) +
   scale_fill_gradient(low="darkslategray4", high="darkslategray1", trans="log10",
-                      name="Municipal waste / 1000s tonnes") +
-  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of data")
+                      name="1000s tonnes") +
+  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of total municipal waste data")
 
 # Use patchwork to arrange plots
-(p1+p2)/p3 + plot_layout(heights=c(1,1))
+p1 / p2
 
+
+## @knitr wasteplotgeo
+p3
 
 ## @knitr gdpplot
 # darkorange
 p1 = qplot(gdp_pc$gdp_pc, 
            geom="histogram",
            fill=I("darkorange2")) +
-  labs(x="GDP per capita / $USD", y="Count", title="Histograms")
+  labs(x="GDP per capita / $USD", y="Count", 
+       title="Histograms: Distribution of GDP per capita values")
 
 p2 = qplot(log10(gdp_pc$gdp_pc), 
            geom="histogram",
@@ -104,19 +108,23 @@ p3 = ggplot(data = world) +
   geom_sf() +
   geom_sf(data=world_gdp, aes(fill=gdp_pc), show.legend = TRUE) +
   scale_fill_gradient(low="darkorange4", high="darkorange1", trans="log10",
-                      name="GDP per capita / $USD") +
-  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of data")
+                      name="$USD") +
+  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of GDP per capita data")
 
 # Use patchwork to arrange plots
-(p1+p2)/p3 + plot_layout(heights=c(1,1))
+p1 / p2
 
+
+## @knitr gdpplotgeo
+p3
 
 ## @knitr popplot
 # firebrick
 p1 = qplot(pop$pop, 
            geom="histogram",
            fill=I("firebrick2")) +
-  labs(x="Population", y="Count", title="Histograms")
+  labs(x="Population", y="Count", 
+       title="Histograms: Distribution of population values")
 
 p2 = qplot(log10(gdp_pc$gdp_pc), 
            geom="histogram",
@@ -128,7 +136,10 @@ p3 = ggplot(data = world) +
   geom_sf(data=world_pop, aes(fill=pop), show.legend = TRUE) +
   scale_fill_gradient(low="firebrick4", high="firebrick1", trans="log10",
                       name="Population") +
-  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of data")
+  labs(x="Longitude", y="Latitude", title="Geospatial: Most recent year of population data")
 
 # Use patchwork to arrange plots
-(p1+p2)/p3 + plot_layout(heights=c(1,1))
+p1 / p2
+
+## @knitr popplotgeo
+p3

@@ -7,10 +7,9 @@ library(rnaturalearth)
 library(viridis)
 
 # Geometries for plotting countries
-world <- ne_countries(scale = "large", returnclass = "sf") %>%
+world <- ne_countries(scale = "small", returnclass = "sf") %>%
   filter(name != "Antarctica") %>%
-  select(c("name", "continent", "region_un")) %>%
-  rename("country"="name")
+  select(c("name", "continent", "region_un", "un_a3"))
 
 # Centroid of each country
 world <- cbind(world, st_coordinates(st_centroid(world$geometry, of_largest_polygon = TRUE)))
@@ -30,5 +29,6 @@ ggplot(data = world) +
 
 
 # TODO: Latitude axis values 
+
 
 

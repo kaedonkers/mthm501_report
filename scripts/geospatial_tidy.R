@@ -119,3 +119,37 @@ setdiff(data$country, world_l$country)
 # [18] "The former Yugoslav Republic of Macedonia"           
 # [19] "United Kingdom of Great Britain and Northern Ireland"
 # [20] "United Republic of Tanzania"
+
+
+data %>%
+  filter(country>="R") %>%
+  unique(.[country])
+
+
+# ---
+# Use `countrycode` package to guess country code names
+
+library(countrycode)
+
+data_codes <- guess_field(unique(data$country))
+
+world <- ne_countries(scale = "large", returnclass = "sf") %>%
+  filter(name != "Antarctica")
+
+world %>%
+  st_set_geometry(NULL) %>%
+  rapply(function(x)length(unique(x))) %>%
+  sort()
+
+codes = world$un_a3 %>%
+  countrycode::countrycode("un", "un.name.en")
+
+length(intersect(data$country, codes))
+setdiff(data$country, codes)
+
+
+uncodes = world %>%
+  st_set_geometry(NULL) %>%
+  select(name,un_a3) %>%
+  mutate(un_a3=as.numeric(un_a3))
+View(uncodes)
